@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -10,7 +11,7 @@ public class WordGuesser {
         "meloun", "jahoda", "malina", "ostruzina", "boruvka", "rybiz", "med", "orech", "mandle", "pistacie"
     };
 
-    public static char[] guessedLetters = {};
+    public static ArrayList<Character> guessedLetters = new ArrayList<>();
     public static char[] word = {};
     public static char[] lettersGuessedRight = {};
 
@@ -22,51 +23,68 @@ public class WordGuesser {
     }
 
     public static boolean checkGuessedLetters(char letter) {
-        for (int i = 0; i < (guessedLetters.length - 1); i++) {
-            if (guessedLetters[i] == letter) {
-                return true;
-            }
-        }
-        return false;
+        return guessedLetters.contains(letter);
     }
-    public static void checkLetters(char letter) {
-        for (int i = 0; i < (guessedLetters.length - 1); i++) {
+
+    public static boolean checkLetterInWord(char letter) {
+        boolean x = false;
+        for (int i = 0; i < (lettersGuessedRight.length - 1); i++) {
             if (word[i] == letter) {
-                
+                lettersGuessedRight[i] = letter;
+                x = true;
             }
         }
+        for (int i = 0; i < (lettersGuessedRight.length - 1); i++) {
+            System.out.print(lettersGuessedRight[i] + " ");
+        }
+        return x;
+    }
+
+    public static boolean checkIfSame() {
+        for (int i = 0; i < (lettersGuessedRight.length - 1); i++) {
+            if (word[i] != lettersGuessedRight[i]) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public static void game() {
         System.out.println("Vítej ve hře word guesser!");
         System.out.println("-----------------------------------");
-        while (true) {    
+        while (true) {
+            int health = 6;
             String wordString = getWord();
             word = wordString.toCharArray();
+            lettersGuessedRight = new char[word.length];
             for (int x = 0; x < (word.length - 1); x++) {
                 lettersGuessedRight[x] = '_';
             }
-    
+            checkLetterInWord('0');
             while (true) {
-                System.out.print("Zadej písmeno: ");
-                Scanner scanner = new Scanner(System.in);
-                String scan = scanner.nextLine();
-                scanner.close();
-                char character = scan.charAt(0);
-        
-                if (checkGuessedLetters(character)) {
-                    System.out.print("Písmeno jsi už hádal, zadej jiné písmeno: ");
-                }
-                else {
-    
+                if (checkIfSame()) {
+                    System.out.println("Uhádl jsi slovo!");
                     break;
+                }
+                System.out.print("\nZadej písmeno: ");
+                while (true) {
+                    Scanner scanner = new Scanner(System.in);
+                    String input = scanner.nextLine();
+                    char character = input.charAt(0);
+            
+                    if (checkGuessedLetters(character)) {
+                        System.out.print("Písmeno jsi už hádal, zadej jiné písmeno: ");
+                    }
+                    else {
+                        guessedLetters.add(character);
+                        checkLetterInWord(character);
+                        break;
+                    }
                 }
             }
         }
-
-
-        }
+    }
     public static void main(String[] args) {
-
+        game();
     }
 }
