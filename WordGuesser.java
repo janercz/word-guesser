@@ -14,6 +14,7 @@ public class WordGuesser {
     public static ArrayList<Character> guessedLetters = new ArrayList<>();
     public static char[] word = {};
     public static char[] lettersGuessedRight = {};
+    static Scanner scanner = new Scanner(System.in);
 
     public static String getWord() {
         Random random = new Random();
@@ -28,20 +29,20 @@ public class WordGuesser {
 
     public static boolean checkLetterInWord(char letter) {
         boolean x = false;
-        for (int i = 0; i < (lettersGuessedRight.length - 1); i++) {
+        for (int i = 0; i < lettersGuessedRight.length; i++) {
             if (word[i] == letter) {
                 lettersGuessedRight[i] = letter;
                 x = true;
             }
         }
-        for (int i = 0; i < (lettersGuessedRight.length - 1); i++) {
+        for (int i = 0; i < lettersGuessedRight.length; i++) {
             System.out.print(lettersGuessedRight[i] + " ");
         }
         return x;
     }
 
     public static boolean checkIfSame() {
-        for (int i = 0; i < (lettersGuessedRight.length - 1); i++) {
+        for (int i = 0; i < lettersGuessedRight.length; i++) {
             if (word[i] != lettersGuessedRight[i]) {
                 return false;
             }
@@ -50,41 +51,73 @@ public class WordGuesser {
     }
 
     public static void game() {
-        System.out.println("Vítej ve hře word guesser!");
-        System.out.println("-----------------------------------");
+        int health = 10;
+        guessedLetters.clear();
+        String wordString = getWord();
+        word = wordString.toCharArray();
+        lettersGuessedRight = new char[word.length];
+        for (int x = 0; x < word.length; x++) {
+            lettersGuessedRight[x] = '_';
+        }
+        System.out.println("\nPočet životů: " + health);
+        checkLetterInWord('0');
         while (true) {
-            int health = 6;
-            String wordString = getWord();
-            word = wordString.toCharArray();
-            lettersGuessedRight = new char[word.length];
-            for (int x = 0; x < (word.length - 1); x++) {
-                lettersGuessedRight[x] = '_';
+            if (health == 0) {
+                System.out.print("\nProhrál jsi!\nSlovo bylo: ");
+                System.out.print(new String(word));
+                break;
             }
-            checkLetterInWord('0');
+            if (checkIfSame()) {
+                System.out.print("\nVyhrál jsi! Uhádl jsi slovo: ");
+                System.out.print(new String(word));
+                break;
+            }
+            System.out.print("\nZadej písmeno: ");
             while (true) {
-                if (checkIfSame()) {
-                    System.out.println("Uhádl jsi slovo!");
-                    break;
-                }
-                System.out.print("\nZadej písmeno: ");
-                while (true) {
-                    Scanner scanner = new Scanner(System.in);
+                try {
                     String input = scanner.nextLine();
                     char character = input.charAt(0);
-            
+                    System.out.println("\n");
                     if (checkGuessedLetters(character)) {
                         System.out.print("Písmeno jsi už hádal, zadej jiné písmeno: ");
                     }
                     else {
                         guessedLetters.add(character);
-                        checkLetterInWord(character);
-                        break;
+                        if (checkLetterInWord(character)) {
+                            System.out.print("\nPočet životů: " + health);
+                            break;
+                        }
+                        else {
+                            health--;
+                            System.out.print("\nPočet životů: " + health);
+                            break;
+                        }
                     }
+                }
+                catch (StringIndexOutOfBoundsException e){
+                    System.out.print("Chybný vstup. Zkus to znovu: ");
+                    continue;
+                }
                 }
             }
         }
-    }
     public static void main(String[] args) {
-        game();
+        System.out.println("Vítej ve hře word guesser!");
+        System.out.println("-----------------------------------");
+        while (true) {
+            game();
+            System.out.print("\n\nChceš hrát znovu (a/n): ");
+            String input = scanner.nextLine();
+            if (input.isEmpty()) {
+                System.out.println("Chybný vstup. Ukončuji hru.");
+                break;
+            }
+            char character = input.charAt(0);
+            if (character == 'a') {
+                continue;
+            }
+            else break;
+        }
+        scanner.close();
     }
 }
