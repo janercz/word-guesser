@@ -12,12 +12,12 @@ public class WordGuesser {
     };
 
     static ArrayList<Character> guessedLetters = new ArrayList<>();
-    static char[] word = {};
-    static char[] lettersGuessedRight = {};
+    static char[] word;
+    static char[] lettersGuessedRight;
     static Scanner scanner = new Scanner(System.in);
+    static Random random = new Random();
 
     static String getWord() {
-        Random random = new Random();
         int randomIndex = random.nextInt(words.length);
         return words[randomIndex];
     }
